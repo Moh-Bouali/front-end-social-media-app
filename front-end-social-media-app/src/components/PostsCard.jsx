@@ -11,7 +11,7 @@ function PostCard() {
           {new Date().toLocaleDateString()} {/* Post date */}
         </Typography>
         <Typography variant="body1" sx={{ marginTop: 1 }}>
-          I am a picka! {/* Display the post content */}
+          Enjoy life! {/* Display the post content */}
         </Typography>
       </CardContent>
     </Card>

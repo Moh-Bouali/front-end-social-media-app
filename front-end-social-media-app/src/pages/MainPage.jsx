@@ -3,7 +3,6 @@ import { useAuth } from "../contexts/AuthContext"; // Import AuthContext to acce
 import PrimarySearchAppBar from "../components/AppNav";
 import PostCard from "../components/PostsCard"; // Import PostCard component
 import { Container, Typography, Grid } from "@mui/material";
-
 const MainPage = () => {
   const { token, logout } = useAuth(); // Access the JWT token from context
   const [profile, setProfile] = useState(null); // Set initial state to null
@@ -13,7 +12,6 @@ const MainPage = () => {
   // Fetch the user's existing profile when the component loads
   useEffect(() => {
     if (token) {
-      console.log("I am in MainPage" + token);
       fetch("http://localhost:9000/api/user/profile", {
         method: "GET",
         headers: {
