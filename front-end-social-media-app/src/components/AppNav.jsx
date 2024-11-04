@@ -79,9 +79,6 @@ function PrimarySearchAppBar({ user }) {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [message, setMessage] = useState("");
   const [nmbrOfNotifications, setNmbrOfNotifications] = useState(0);
-  const [nmbrOfNotificationsResponse, setNmbrOfNotificationsResponse] =
-    useState(0);
-  const [stompClient, setStompClient] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [connected, setConnected] = useState(false); // Keep track of connection status
   const { token } = useAuth(); // Access the JWT token from context
@@ -102,15 +99,6 @@ function PrimarySearchAppBar({ user }) {
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
-
-  // const handleMenuClose = () => {
-  //   setAnchorEl(null);
-  //   handleMobileMenuClose();
-  // };
-
-  // const handleMobileMenuOpen = (event) => {
-  //   setMobileMoreAnchorEl(event.currentTarget);
-  // };
 
   const handleSearchChange = async (e) => {
     setSearchTerm(e.target.value);
@@ -134,11 +122,13 @@ function PrimarySearchAppBar({ user }) {
           const updatedUsers = await Promise.all(
             users.map(async (searchedUser) => {
               const friendshipResponse = await fetch(
-                `http://localhost:9000/api/friendship/check?user1Id=${user.id}&user2Id=${searchedUser.id}`,
+                `http://localhost:9000/api/friendship/check`,
                 {
                   method: "GET",
                   headers: {
-                    Authorization: `Bearer ${token}`, // Use the token for authentication
+                    Authorization: `Bearer ${token}`,
+                    "X-user-Id": user.id,
+                    "X-Friend-Id": searchedUser.id, // Use the token for authentication
                   },
                 }
               );
@@ -165,31 +155,6 @@ function PrimarySearchAppBar({ user }) {
     }
   };
 
-  // Trigger a search for friends when the search term changes
-  // const handleSearchChange = (e) => {
-  //   setSearchTerm(e.target.value);
-  //   if (e.target.value) {
-  //     // Make an API call to search for users by username or email
-  //     fetch(`http://localhost:9000/api/user/search?query=${e.target.value}`, {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // Use the token for authentication
-  //       },
-  //     })
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         setSearchResults(data); // Update the search results
-  //         console.log(searchResults);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error searching for users:", error);
-  //         setSearchResults([]); // Clear results on error
-  //       });
-  //   } else {
-  //     setSearchResults([]); // Clear the search results when the input is cleared
-  //   }
-  // };
-
   useEffect(() => {
     if (connectedRef.current) {
       return; // Prevent reconnection if already connected
@@ -197,7 +162,7 @@ function PrimarySearchAppBar({ user }) {
 
     // Set up WebSocket and Stomp client
     const socket = new WebSocket(
-      `ws://localhost:8083/ws?access_token=${token}`
+      `ws://localhost:9000/ws?access_token=${token}`
     );
     const client = Stomp.over(socket);
 
@@ -244,72 +209,6 @@ function PrimarySearchAppBar({ user }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array to run only once after mounting
 
-  // useEffect(() => {
-  //   const socket = new WebSocket(`ws://localhost:8089/ws`);
-  //   const client = Stomp.over(socket);
-
-  //   client.connect({}, () => {
-  //     console.log("connected!");
-  //     client.subscribe(`/topic/requests/${user.id}`, (message) => {
-  //       console.log("received message", message.body);
-  //       const request = JSON.parse(message.body);
-  //       console.log("request is " + request.body);
-  //       setNotifications((prevNotifications) => [
-  //         ...prevNotifications,
-  //         request,
-  //       ]);
-  //       setCurrentRequest(request); // Set the current friend request
-  //       console.log("current user is" + JSON.stringify(currentRequest));
-  //       //console.log("notifications is " + JSON.stringify(notifications));
-  //       setNmbrOfNotifications((prevCount) => prevCount + 1);
-  //       setIsInRequest(true);
-  //     });
-  //   });
-
-  //   setStompClient(client);
-
-  //   return () => {
-  //     if (client && client.connected) {
-  //       client.disconnect(() => {
-  //         console.log("Disconnected from WebSocket");
-  //       });
-  //     }
-  //   };
-  // }, [user.id, token]);
-
-  // useEffect(() => {
-  //   const socket = new WebSocket(`ws://localhost:8089/ws`);
-  //   const client = Stomp.over(socket);
-
-  //   client.connect({}, () => {
-  //     console.log("connected!");
-  //     client.subscribe(`/topic/responses/${user.id}`, (message) => {
-  //       console.log("response message", message.body);
-  //       const response = JSON.parse(message.body);
-  //       console.log("response is " + response.body);
-  //       setNotifications((prevNotifications) => [
-  //         ...prevNotifications,
-  //         response,
-  //       ]);
-  //       setCurrentResponse(response); // Set the current friend request
-
-  //       //console.log("notifications is " + JSON.stringify(notifications));
-  //       setNmbrOfNotifications((prevCount) => prevCount + 1);
-  //       setIsInRequest(false);
-  //     });
-  //   });
-
-  //   setStompClient(client);
-
-  //   return () => {
-  //     if (client && client.connected) {
-  //       client.disconnect(() => {
-  //         console.log("Disconnected from WebSocket");
-  //       });
-  //     }
-  //   };
-  // }, [user.id, token]);
-
   const handleAccept = () => {
     //setNmbrOfNotifications((prevCount) => prevCount - 1);
     setIsInRequest(false);
@@ -321,11 +220,7 @@ function PrimarySearchAppBar({ user }) {
         Authorization: `Bearer ${token}`, // Use the token for authentication if needed
       },
       body: JSON.stringify({
-        id: currentRequest.id,
-        requester_id: currentRequest.requester_id,
-        requester_username: currentRequest.requester_username,
-        requested_id: currentRequest.requested_id,
-        requested_username: currentRequest.requested_username,
+        ...currentRequest,
         status: "ACCEPTED",
         created_at: new Date().toISOString(),
       }), // Replace with actual requesterId
@@ -371,188 +266,46 @@ function PrimarySearchAppBar({ user }) {
     if (searchResults.length > 0) {
       return (
         <List>
-          {searchResults.map((searchedUser) => (
-            <ListItem key={searchedUser.id}>
-              <ListItemText
-                primary={searchedUser.username}
-                secondary={searchedUser.email}
-              />
-              <ListItemSecondaryAction>
-                {searchedUser.isFriend ? (
-                  // Display check icon if already friends
-                  <MuiIconButton edge="end" disabled>
-                    <CheckCircleIcon color="primary" />
-                  </MuiIconButton>
-                ) : (
-                  // Display add friend icon if not friends yet
-                  <MuiIconButton
-                    edge="end"
-                    sx={{ color: "#E3E3E3" }}
-                    onClick={() => handleSendFriendRequest(searchedUser)}
-                  >
-                    <PersonAddIcon />
-                  </MuiIconButton>
-                )}
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+          {searchResults
+            .filter((searchedUser) => searchedUser.username !== user.username)
+            .map((searchedUser) => (
+              <ListItem key={searchedUser.id}>
+                <ListItemText
+                  primary={searchedUser.username}
+                  secondary={searchedUser.email}
+                />
+                <ListItemSecondaryAction>
+                  {searchedUser.isFriend ? (
+                    // Display check icon if already friends
+                    <MuiIconButton edge="end" disabled>
+                      <CheckCircleIcon style={{ color: "white" }} />
+                    </MuiIconButton>
+                  ) : (
+                    // Display add friend icon if not friends yet
+                    <MuiIconButton
+                      edge="end"
+                      sx={{ color: "#E3E3E3" }}
+                      onClick={() => handleSendFriendRequest(searchedUser)}
+                    >
+                      <PersonAddIcon />
+                    </MuiIconButton>
+                  )}
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
         </List>
       );
     }
     return null;
   };
 
-  // const renderSearchResults = () => {
-  //   if (searchResults.length > 0) {
-  //     return (
-  //       <List>
-  //         {searchResults.map((searchedUser) => (
-  //           <ListItem key={searchedUser.id}>
-  //             <ListItemText
-  //               primary={searchedUser.username}
-  //               secondary={searchedUser.email}
-  //             />
-  //             <ListItemSecondaryAction>
-  //               <MuiIconButton
-  //                 edge="end"
-  //                 sx={{ color: "#E3E3E3" }}
-  //                 onClick={() => handleSendFriendRequest(searchedUser)}
-  //               >
-  //                 <PersonAddIcon />
-  //               </MuiIconButton>
-  //             </ListItemSecondaryAction>
-  //           </ListItem>
-  //         ))}
-  //       </List>
-  //     );
-  //   }
-  //   return null;
-  // };
-
   const handleOpenDialog = () => {
     setOpenDialog(true);
     setNmbrOfNotifications((prevCount) => prevCount - 1);
   };
 
-  //const menuId = "primary-search-account-menu";
-  // const renderMenu = (
-  //   <Menu
-  //     anchorEl={anchorEl}
-  //     anchorOrigin={{
-  //       vertical: "top",
-  //       horizontal: "right",
-  //     }}
-  //     id={menuId}
-  //     keepMounted
-  //     transformOrigin={{
-  //       vertical: "top",
-  //       horizontal: "right",
-  //     }}
-  //     open={isMenuOpen}
-  //     onClose={handleMenuClose}
-  //   >
-  //     <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-  //     <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-  //   </Menu>
-  // );
-
-  // const mobileMenuId = "primary-search-account-menu-mobile";
-  // const renderMobileMenu = (
-  //   <Menu
-  //     anchorEl={mobileMoreAnchorEl}
-  //     anchorOrigin={{
-  //       vertical: "top",
-  //       horizontal: "right",
-  //     }}
-  //     id={mobileMenuId}
-  //     keepMounted
-  //     transformOrigin={{
-  //       vertical: "top",
-  //       horizontal: "right",
-  //     }}
-  //     open={isMobileMenuOpen}
-  //     onClose={handleMobileMenuClose}
-  //   >
-  //     <MenuItem>
-  //       <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-  //         <Badge badgeContent={4} color="error">
-  //           <MailIcon />
-  //         </Badge>
-  //       </IconButton>
-  //       <p>Messages</p>
-  //     </MenuItem>
-  //     <MenuItem>
-  //       <>
-  //         <IconButton
-  //           size="large"
-  //           aria-label="show number of new notifications"
-  //           color="inherit"
-  //           onClick={handleOpenDialog}
-  //         >
-  //           <Badge badgeContent={nmbrOfNotifications} color="error">
-  //             <NotificationsIcon />
-  //           </Badge>
-  //         </IconButton>
-
-  //         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-  //           <DialogTitle>
-  //             {isInRequest ? "Friend Request" : "Friend Request Accepted"}
-  //           </DialogTitle>
-  //           <DialogContent>
-  //             {isInRequest ? (
-  //               <Typography>
-  //                 You have a friend request from{" "}
-  //                 {currentRequest?.requester_username}.
-  //               </Typography>
-  //             ) : (
-  //               <Typography>
-  //                 {currentRequest?.requester_username} has accepted your friend
-  //                 request!
-  //               </Typography>
-  //             )}
-  //           </DialogContent>
-  //           <DialogActions>
-  //             {isInRequest ? (
-  //               <>
-  //                 <Button
-  //                   onClick={(handleAccept, setIsInRequest(false))}
-  //                   color="primary"
-  //                 >
-  //                   Accept
-  //                 </Button>
-  //                 <Button
-  //                   onClick={() => setOpenDialog(false)}
-  //                   color="secondary"
-  //                 >
-  //                   Close
-  //                 </Button>
-  //               </>
-  //             ) : (
-  //               <Button onClick={() => setOpenDialog(false)} color="primary">
-  //                 Close
-  //               </Button>
-  //             )}
-  //           </DialogActions>
-  //         </Dialog>
-  //       </>
-  //     </MenuItem>
-  //     <MenuItem onClick={handleProfileMenuOpen}>
-  //       <IconButton
-  //         size="large"
-  //         aria-label="account of current user"
-  //         aria-controls={menuId}
-  //         aria-haspopup="true"
-  //         color="inherit"
-  //       >
-  //         <AccountCircle />
-  //       </IconButton>
-  //       <p>Profile</p>
-  //     </MenuItem>
-  //   </Menu>
-  // );
-
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, width: "100vw", margin: 0, padding: 0 }}>
       <AppBar position="static">
         <Toolbar>
           <Typography
@@ -576,7 +329,7 @@ function PrimarySearchAppBar({ user }) {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
@@ -584,7 +337,7 @@ function PrimarySearchAppBar({ user }) {
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <>
               <IconButton
                 size="large"

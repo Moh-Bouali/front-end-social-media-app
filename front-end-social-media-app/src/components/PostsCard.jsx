@@ -1,17 +1,19 @@
 import { Card, CardContent, Typography } from "@mui/material";
 
-function PostCard() {
+function PostCard({ post, username }) {
   return (
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
+        {/* Display the username */}
         <Typography variant="h6" component="div">
-          Jakub {/* Display the username */}
+          {username}
         </Typography>
+        {/* Display the post date */}
         <Typography variant="body2" color="text.secondary">
-          {new Date().toLocaleDateString()} {/* Post date */}
+          {new Date(post.createdAt).toLocaleDateString()} {/* Post date */}
         </Typography>
         <Typography variant="body1" sx={{ marginTop: 1 }}>
-          Enjoy life! {/* Display the post content */}
+          {post.content} {/* Post content */}
         </Typography>
       </CardContent>
     </Card>
