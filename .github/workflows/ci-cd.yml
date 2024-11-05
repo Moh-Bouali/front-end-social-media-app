@@ -1,0 +1,40 @@
+name: CI/CD Pipeline for React App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Update Node.js version as needed
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./path-to-your-react-app
+
+      - name: Build React app
+        run: npm run build
+        working-directory: ./path-to-your-react-app
+
+      - name: Build Docker image
+        run: docker build -t your-dockerhub-username/react-app:${{ github.sha }} .
+        working-directory: ./path-to-your-react-app
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker push your-dockerhub-username/react-app:${{ github.sha }}
