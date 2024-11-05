@@ -23,18 +23,18 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./path-to-your-react-app
+        working-directory: ./front-end-social-media-app
 
       - name: Build React app
         run: npm run build
-        working-directory: ./path-to-your-react-app
+        working-directory: ./front-end-social-media-app
 
       - name: Build Docker image
-        run: docker build -t your-dockerhub-username/react-app:${{ github.sha }} .
-        working-directory: ./path-to-your-react-app
+        run: docker build -t "${{ secrets.DOCKERHUB_USERNAME }}/react-app:${{ github.sha }}" .
+        working-directory: ./front-end-social-media-app
 
       - name: Log in to DockerHub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Push Docker image
-        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:${{ github.sha }}
+        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/react-app:${{ github.sha }}"
