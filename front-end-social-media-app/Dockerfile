@@ -1,23 +1,23 @@
-# Stage 1: Build the app
-FROM node:18 AS build
+# Use an official Node.js runtime as a parent image
+FROM node:18
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package.json and package-lock.json files to the container
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy the app files and build the app
+# Copy the rest of the application code to the container
 COPY . .
+
+# Build the app
 RUN npm run build
 
-# Stage 2: Serve the app with a lightweight web server
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
+# Expose port 5173 to the outside world
 EXPOSE 5173
 
-# Start NGINX server
-CMD ["nginx", "-g", "daemon off;"]
+# Run the app in preview mode, which serves the build output
+CMD ["npm", "run", "preview"]
