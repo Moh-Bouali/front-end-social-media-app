@@ -37,4 +37,4 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Push Docker image
-        run: docker push your-dockerhub-username/react-app:${{ github.sha }}
+        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:${{ github.sha }}
