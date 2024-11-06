@@ -357,7 +357,7 @@ const MainPage = () => {
   // Fetch user profile
   useEffect(() => {
     if (token) {
-      fetch("http://localhost:9000/api/user/profile", {
+      fetch("http://api-gateway:9000/api/user/profile", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       })

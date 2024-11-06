@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 5173
 
 # Run the app in preview mode, which serves the build output
-CMD ["npm", "run", "preview"]
+CMD ["vite", "preview", "--port", "5173", "--host"]

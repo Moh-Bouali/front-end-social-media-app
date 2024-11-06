@@ -106,7 +106,7 @@ function PrimarySearchAppBar({ user }) {
       try {
         // Make an API call to search for users by username or email
         const response = await fetch(
-          `http://localhost:9000/api/user/search?query=${e.target.value}`,
+          `http://api-gateway:9000/api/user/search?query=${e.target.value}`,
           {
             method: "GET",
             headers: {
@@ -122,7 +122,7 @@ function PrimarySearchAppBar({ user }) {
           const updatedUsers = await Promise.all(
             users.map(async (searchedUser) => {
               const friendshipResponse = await fetch(
-                `http://localhost:9000/api/friendship/check`,
+                `http://api-gateway:9000/api/friendship/check`,
                 {
                   method: "GET",
                   headers: {
@@ -162,7 +162,7 @@ function PrimarySearchAppBar({ user }) {
 
     // Set up WebSocket and Stomp client
     const socket = new WebSocket(
-      `ws://localhost:9000/ws?access_token=${token}`
+      `ws://api-gateway:9000/ws?access_token=${token}`
     );
     const client = Stomp.over(socket);
 
@@ -213,7 +213,7 @@ function PrimarySearchAppBar({ user }) {
     //setNmbrOfNotifications((prevCount) => prevCount - 1);
     setIsInRequest(false);
 
-    fetch("http://localhost:9000/api/friendship/response", {
+    fetch("http://api-gateway:9000/api/friendship/response", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -237,7 +237,7 @@ function PrimarySearchAppBar({ user }) {
 
   // Function to send a friend request
   const handleSendFriendRequest = (searchedUser) => {
-    fetch("http://localhost:9000/api/friendship/request", {
+    fetch("http://api-gateway:9000/api/friendship/request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

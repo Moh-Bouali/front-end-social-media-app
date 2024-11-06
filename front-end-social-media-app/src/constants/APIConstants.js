@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const URL = axios.create({
-  baseURL: "http://localhost:9000",
+  baseURL: "http://api-gateway:9000",
 });
 
 export default URL;
