@@ -162,11 +162,11 @@ function PrimarySearchAppBar({ user }) {
 
     // Set up WebSocket and Stomp client
     const socket = new WebSocket(
-      `ws://localhost:9000/ws?access_token=${token}`
+      `ws://localhost:8083/ws?access_token=${token}`
     );
     const client = Stomp.over(socket);
 
-    client.connect({ Authorization: `Bearer ${token}` }, () => {
+    client.connect({}, () => {
       console.log("connected!");
 
       // Subscribe to friend requests for the requested user
