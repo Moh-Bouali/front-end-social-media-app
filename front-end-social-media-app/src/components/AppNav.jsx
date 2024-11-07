@@ -162,7 +162,7 @@ function PrimarySearchAppBar({ user }) {
 
     // Set up WebSocket and Stomp client
     const socket = new WebSocket(
-      `ws://api-gateway:9000/ws?access_token=${token}`
+      `ws://localhost:9000/ws?access_token=${token}`
     );
     const client = Stomp.over(socket);
 
@@ -213,7 +213,7 @@ function PrimarySearchAppBar({ user }) {
     //setNmbrOfNotifications((prevCount) => prevCount - 1);
     setIsInRequest(false);
 
-    fetch("http://localhost:9000/api/friendship/response", {
+    fetch("http://notification-service:8083/api/friendship/response", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
