@@ -162,7 +162,7 @@ function PrimarySearchAppBar({ user }) {
 
     // Set up WebSocket and Stomp client
     const socket = new WebSocket(
-      `ws://localhost:8083/ws?access_token=${token}`
+      `ws://api-gateway:9000/ws?access_token=${token}`
     );
     const client = Stomp.over(socket);
 
