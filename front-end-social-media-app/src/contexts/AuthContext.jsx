@@ -4,15 +4,15 @@ import { createContext, useState, useContext } from "react";
 const AuthContext = createContext();
 const redirectUri = "http://localhost:5173";
 
-function deleteAllCookies() {
-  const cookies = document.cookie.split(";");
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-  }
-}
+// function deleteAllCookies() {
+//   const cookies = document.cookie.split(";");
+//   for (let i = 0; i < cookies.length; i++) {
+//     const cookie = cookies[i];
+//     const eqPos = cookie.indexOf("=");
+//     const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+//     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+//   }
+// }
 
 // Create a provider component
 function AuthProvider({ children }) {
@@ -31,9 +31,9 @@ function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     localStorage.removeItem("token"); // Remove token from localStorage
-    deleteAllCookies();
+    //deleteAllCookies();
     //window.location.href = "/"; // Redirect to login page (or whatever path you prefer)
-    window.location.href = `http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/logout?post_logout_redirect_uri=${redirectUri}&client_id=spring-client-individual-id`; // Redirect to Keycloak's login page after logout
+    window.location.href = `http://keycloak:8181/realms/spring-microservices-security-realm/protocol/openid-connect/logout?post_logout_redirect_uri=${redirectUri}&client_id=spring-client-individual-id`; // Redirect to Keycloak's login page after logout
   };
 
   // Optional: Automatically logout if token is invalid or expired (this can be implemented)

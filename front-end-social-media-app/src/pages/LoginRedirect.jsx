@@ -6,7 +6,7 @@ const LoginRedirect = () => {
   const clientId = "spring-client-individual-id";
   const redirectUri = "http://localhost:5173/callback";
   // Correct Keycloak URL
-  const keycloakUrl = `http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+  const keycloakUrl = `http://keycloak:8181/realms/spring-microservices-security-realm/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri
   )}&response_type=token`;
 
