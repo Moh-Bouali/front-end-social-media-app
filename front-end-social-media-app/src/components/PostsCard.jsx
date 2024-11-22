@@ -6,7 +6,7 @@ function PostCard({ post, username }) {
       <CardContent>
         {/* Display the username */}
         <Typography variant="h6" component="div">
-          {username}
+          {post.username}
         </Typography>
         {/* Display the post date */}
         <Typography variant="body2" color="text.secondary">
