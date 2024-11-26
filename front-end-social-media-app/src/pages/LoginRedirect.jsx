@@ -4,9 +4,9 @@ import { useAuth } from "../contexts/AuthContext"; // Import the AuthContext
 const LoginRedirect = () => {
   const { saveToken } = useAuth(); // Get the function to save the token
   const clientId = "spring-client-individual-id";
-  const redirectUri = "http://localhost:5173/callback";
+  const redirectUri = "http://frontend-domain/callback";
   // Correct Keycloak URL
-  const keycloakUrl = `http://keycloak:8181/realms/spring-microservices-security-realm/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+  const keycloakUrl = `http://keycloak-domain/realms/spring-microservices-security-realm/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri
   )}&response_type=token`;
 
