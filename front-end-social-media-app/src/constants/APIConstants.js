@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const URL = axios.create({
-  baseURL: "http://gateway-domain",
+  baseURL: "https://gateway-domain",
 });
 
 export default URL;
