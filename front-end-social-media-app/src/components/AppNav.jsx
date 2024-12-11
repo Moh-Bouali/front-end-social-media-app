@@ -106,7 +106,7 @@ function PrimarySearchAppBar({ user }) {
       try {
         // Make an API call to search for users by username or email
         const response = await fetch(
-          `http://gateway-domain/api/user/search?query=${e.target.value}`,
+          `https://gateway-domain/api/user/search?query=${e.target.value}`,
           {
             method: "GET",
             headers: {
@@ -122,7 +122,7 @@ function PrimarySearchAppBar({ user }) {
           const updatedUsers = await Promise.all(
             users.map(async (searchedUser) => {
               const friendshipResponse = await fetch(
-                `http://gateway-domain/api/friendship/check`,
+                `https://gateway-domain/api/friendship/check`,
                 {
                   method: "GET",
                   headers: {
@@ -213,7 +213,7 @@ function PrimarySearchAppBar({ user }) {
     //setNmbrOfNotifications((prevCount) => prevCount - 1);
     setIsInRequest(false);
 
-    fetch("http://gateway-domain/api/friendship/response", {
+    fetch("https://gateway-domain/api/friendship/response", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -237,7 +237,7 @@ function PrimarySearchAppBar({ user }) {
 
   // Function to send a friend request
   const handleSendFriendRequest = (searchedUser) => {
-    fetch("http://gateway-domain/api/friendship/request", {
+    fetch("https://gateway-domain/api/friendship/request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

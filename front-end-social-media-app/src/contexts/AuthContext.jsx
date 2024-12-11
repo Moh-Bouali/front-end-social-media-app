@@ -2,7 +2,7 @@ import { createContext, useState, useContext } from "react";
 
 // Create a context for the JWT token
 const AuthContext = createContext();
-const redirectUri = "http://frontend-domain";
+const redirectUri = "https://frontend-domain";
 
 // function deleteAllCookies() {
 //   const cookies = document.cookie.split(";");

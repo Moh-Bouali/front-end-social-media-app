@@ -29,7 +29,7 @@ const MainPage = () => {
   // Fetch user profile
   useEffect(() => {
     if (token) {
-      fetch("http://gateway-domain/api/user/profile", {
+      fetch("https://gateway-domain/api/user/profile", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       })
