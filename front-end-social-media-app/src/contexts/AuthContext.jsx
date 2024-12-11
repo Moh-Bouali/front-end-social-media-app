@@ -2,7 +2,7 @@ import { createContext, useState, useContext } from "react";
 
 // Create a context for the JWT token
 const AuthContext = createContext();
-const redirectUri = "https://frontend-domain";
+const redirectUri = "http://frontend-domain";
 
 // function deleteAllCookies() {
 //   const cookies = document.cookie.split(";");
@@ -33,7 +33,7 @@ function AuthProvider({ children }) {
     localStorage.removeItem("token"); // Remove token from localStorage
     //deleteAllCookies();
     //window.location.href = "/"; // Redirect to login page (or whatever path you prefer)
-    window.location.href = `https://keycloak-domain/realms/spring-microservices-security-realm/protocol/openid-connect/logout?post_logout_redirect_uri=${redirectUri}&client_id=spring-client-individual-id`; // Redirect to Keycloak's login page after logout
+    window.location.href = `http://keycloak-domain/realms/spring-microservices-security-realm/protocol/openid-connect/logout?post_logout_redirect_uri=${redirectUri}&client_id=spring-client-individual-id`; // Redirect to Keycloak's login page after logout
   };
 
   // Optional: Automatically logout if token is invalid or expired (this can be implemented)
